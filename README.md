@@ -1,4 +1,4 @@
 vcsh-zsh
 ========
 
-Zsh configuration in a vcsh repository.
+Personal zsh configuration in a vcsh repository.
