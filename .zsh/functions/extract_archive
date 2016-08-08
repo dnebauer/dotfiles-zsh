@@ -1,0 +1,101 @@
+if [[ -z "$1" ]]; then
+    echo 'usage: ex <archive>'
+    return 1
+fi
+if [ -f $1 ] ; then
+    case $1 in
+        *.tar.bz2)
+            if [[ $(which tar &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                tar xjf $1
+            else
+                echo "Need 'tar' to extract file"
+            fi
+            ;;
+        *.tar.gz)
+            if [[ $(which tar &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                tar xzf $1
+            else
+                echo "Need 'tar' to extract file"
+            fi
+            ;;
+        *.bz2)
+            if [[ $(which bunzip2 &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                bunzip2 $1
+            else
+                echo "Need 'bunzip2' to extract file"
+            fi
+            ;;
+        *.rar)
+            if [[ $(which unrar &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                unrar x $1
+            else
+                echo "Need 'unrar' to extract file"
+            fi
+            ;;
+        *.gz)
+            if [[ $(which gunzip &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                gunzip $1
+            else
+                echo "Need 'gunzip' to extract file"
+            fi
+            ;;
+        *.tar)
+            if [[ $(which tar &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                tar xf $1
+            else
+                echo "Need 'tar' to extract file"
+            fi
+            ;;
+        *.tbz2)
+            if [[ $(which tar &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                tar xjf $1
+            else
+                echo "Need 'tar' to extract file"
+            fi
+            ;;
+        *.tgz)
+            if [[ $(which tar &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                tar xzf $1
+            else
+                echo "Need 'tar' to extract file"
+            fi
+            ;;
+        *.zip)
+            if [[ $(which unzip &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                unzip $1
+            else
+                echo "Need 'unzip' to extract file"
+            fi
+            ;;
+        *.Z)
+            if [[ $(which uncompress &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                uncompress $1
+            else
+                echo "Need 'uncompress' to extract file"
+            fi
+            ;;
+        *.7z)
+            if [[ $(which 7z &>/dev/null ; echo $?) -eq 0 ]] ; then
+                echo "Extracting $1 ..."
+                7z x $1
+            else
+                echo "Need '7z' to extract file"
+            fi
+            ;;
+        *)
+            echo "'$1' cannot be extracted via extract_archive()"
+            ;;
+    esac
+else
+    echo "'$1' is not a valid file"
+fi

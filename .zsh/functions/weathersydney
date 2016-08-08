@@ -1,0 +1,2 @@
+curl -s http://open.live.bbc.co.uk/weather/feeds/en/2147714/3dayforecast.rss \
+    | awk -F'</*title>' '!a[$2]++&&NF!=1 {gsub("&#xB0;","",$2); print $2}'

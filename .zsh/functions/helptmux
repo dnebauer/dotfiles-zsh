@@ -1,0 +1,23 @@
+echo 'tmux aliases'
+echo '------------'
+echo "ta   = 'tmux attach -t'"
+echo "tkss = 'tmux kill-session -t'"
+echo "tksv = 'tmux kill-server'"
+echo "tl   = 'tmux list-sessions'"
+echo "tmux = 'zsh_tmux_plugin_run"
+echo "ts   = 'tmux new-session -s'"
+echo ' '
+echo 'tmux keys bindings'
+echo '------------------'
+echo '`?  = list key bindings'
+echo '`d  = logout'
+echo '`X  = move to window X'
+echo '`c  = create window'
+echo '`,  = name window'
+echo '`w  = list windows'
+echo '`qX = move to pane X'
+echo '`x  = kill pane'
+echo '`|  = split pane vertically'
+echo '`-  = split pane horizontally'
+echo '`t  = show time'
+echo '`:  = show prompt'
