@@ -1,0 +1,8 @@
+"Enter volume name:"
+read volume
+echo "Enter ISO Name (i.e., tmp.iso):"
+read iso
+echo "Enter input directory or file:"
+read files
+echo "Building '$HOME/$iso'"
+mkisofs -o ~/$iso -A $volume -allow-multidot -J -R -iso-level 3 -V $volume -R $files
