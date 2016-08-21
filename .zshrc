@@ -271,7 +271,9 @@ export NODE_PATH
 export EDITOR='vim'
 export USE_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
-
+# urls                                                                 {{{2
+# - github account                                                     {{{3
+export GITURL='https://github.com/dnebauer'
                                                                      # }}}1
 
 # Oh My Zsh configuration
