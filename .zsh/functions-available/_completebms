@@ -1,0 +1,6 @@
+# file navigation system from jeroen janssens at:
+# - http://jeroenjanssens.com/2013/08/16/\
+#   quickly-navigate-your-filesystem-from-the-command-line.html
+# uses commands/functions:  to, bm, unbm and bms
+# plus completion function: _completebms
+reply=($(ls $MARKPATH))

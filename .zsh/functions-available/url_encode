@@ -1,0 +1,5 @@
+# from http://stackoverflow.com/a/187853
+# percent encodes *all* characters
+setopt extended_glob
+echo "${${(j: :)@}//(#b)(?)/%$[[##16]##${match[1]}]}"
+setopt local_options

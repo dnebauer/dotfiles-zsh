@@ -109,43 +109,53 @@ stty stop  undef
 stty start undef
 
 # Functions                                                            {{{1
-# setup                                                                {{{2
-my_fpath="$HOME/.zsh/functions"
+# load user functions                                                  {{{2
+my_fpath="$HOME/.zsh/functions-enabled"
 fpath=($my_fpath $fpath)
 function autoload_my_fns {
     local fn
-    while (($#)) ; do
-        fn="$1"
+    for fn in $(ls -x $my_fpath); do
         if [ -f "$my_fpath/$fn" ] ; then
             autoload "$fn"
         else
             echo "Error: could not find function '$my_fpath/$fn'"
         fi
-        shift
     done
 }
-# weather three day forecasts                                          {{{2
-autoload_my_fns weatherdarwin weathersydney weathermelbourne weatherbrisbane
-# extract any archive ('ex <archive>')                                 {{{2
-autoload_my_fns extract_archive
+# configure user functions                                             {{{2
+# - extract any archive ('ex <archive>')                               {{{3
 if type -f extract_archive &>/dev/null ; then
     alias ex=extract_archive
     compdef '_files -g "*.gz *.tgz *.bz2 *.tbz *.zip *.rar *.tar *.lha"' \
         extract_archive
 fi
-# execute 'git status' if empty enter in git-managed directory         {{{2
+# - execute 'git status' if empty enter in git-managed dir             {{{3
 autoload_my_fns magic-enter
 if type -f magic-enter &>/dev/null ; then
     zle -N magic-enter
     bindkey -M viins   '^M'  magic-enter
 fi
-# tmux help                                                            {{{2
-autoload_my_fns helptmux
-# git aliases                                                          {{{2
+#  - git aliases                                                       {{{3
 autoload_my_fns git-add-all
 if type -f git-add-all &>/dev/null ; then
     alias gaa=git-add-all
 fi
+# - dictionary and thesaurus                                           {{{3
+#   . uses WordNet v3.0
+wordnet='/usr/local/WordNet-3.0'
+if [ "${OSTYPE}" != 'cygwin' -o ! -f "${wordnet}/bin/wn.exe" ] ; then
+    if type -f dictword &>/dev/null ; then
+        disable -f dictword
+    fi
+fi
+# - man pages open in vim                                              {{{3
+compdef vman='man'
+# - file navigation                                                    {{{3
+#   . commands: to, bm, unbm and bms (where 'bm' is 'bookmark')
+#   . http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html
+export MARKPATH=$HOME/.marks
+compctl -K _completebms to
+compctl -K _completebms unbm
 # ansi colours                                                         {{{2
 # - provides variables: RED, GREEN, YELLOW, BLUE, MAGENTA,
 #   CYAN, BLACK, WHITE, the same colours as BOLD_*, and RESET
@@ -155,51 +165,6 @@ for COLOR in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE; do
     eval export BOLD_$COLOR='$fg_bold[${(L)COLOR}]'
 done
 eval RESET='$reset_color'
-# dictionary and thesaurus                                             {{{2
-# - uses WordNet v3.0
-wordnet='/usr/local/WordNet-3.0'
-if [ "${OSTYPE}" = 'cygwin' -a -f "${wordnet}/bin/wn.exe" ] ; then
-    autoload_my_fns dict
-fi
-# man pages open in vim                                                {{{2
-vman() {
-    vim -c "SuperMan $*"
-    [[ "$?" == '0' ]] || echo "No manual entry for $*"
-}
-compdef vman='man'
-# google search                                                        {{{2
-# - from http://stackoverflow.com/a/187853
-function url_encode {    # percent encodes *all* characters
-    setopt extended_glob
-    echo "${${(j: :)@}//(#b)(?)/%$[[##16]##${match[1]}]}"
-    setopt local_options
-}
-function google {    # look up search terms in google
-    local ARGS="$(url_encode "${(j: :)@}")"
-    /usr/bin/links2 "http://www.google.com/search?q=$ARGS"
-}
-# file navigation                                                      {{{2
-# - this solution from jeroen janssens at http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html>
-# - changed terminology to mirror apparix: 'mark'->'bm', 'jump'->'to'
-export MARKPATH=$HOME/.marks
-function to {
-    cd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
-}
-function bm {
-    mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
-}
-function unbm {
-    rm -i "$MARKPATH/$1"
-}
-function bms {
-    ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- \
-        | sed 's/ -/\t-/g' && echo
-}
-function _completebms {
-  reply=($(ls $MARKPATH))
-}
-compctl -K _completebms to
-compctl -K _completebms unbm
 
 # Variables                                                            {{{1
 # paths                                                                {{{2
@@ -255,8 +220,12 @@ rakudo_bin="${HOME}/.rakudobrew/bin"
 [[ -d "${rakudo_bin}" ]] && PATH="${rakudo_bin}:${PATH}"
 unset rakudo_bin
 # - wordnet                                                            {{{3
-PATH="${PATH}:${wordnet}/bin"
-WNHOME="${wordnet}"
+if [ "${OSTYPE}" = 'cygwin' \
+        -a -f "${wordnet}/bin/wn.exe" \
+        -a type -f dictword &>/dev/null ] ; then
+    PATH="${PATH}:${wordnet}/bin"
+    WNHOME="${wordnet}"
+fi
 unset wordnet
 # - export paths                                                       {{{3
 export PATH
@@ -373,7 +342,9 @@ alias mp3info2='mp3info2 -C autoinfo=ID3v2,ID3v1'
 # reload zshrc                                                         {{{1
 alias reload=". ~/.zshrc && echo 'ZSH config reloaded from ~/.zshrc'"
 # dictionary and thesaurus                                             {{{1
-alias thes='dict -h localhost -d moby-thesaurus'
+if which dict &>/dev/null ; then
+    alias thes='dict -h localhost -d moby-thesaurus'
+fi
 # ag alias                                                             {{{1
 # - set automatically by oh-my-zsh
 # - remove alias if ag binary exists

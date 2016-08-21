@@ -1,0 +1,4 @@
+# from http://stackoverflow.com/a/187853
+# look up search terms in google
+local ARGS="$(url_encode "${(j: :)@}")"
+/usr/bin/links2 "http://www.google.com/search?q=$ARGS"
