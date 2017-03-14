@@ -47,6 +47,25 @@ if [ "${OSTYPE}" != 'cygwin' ] ; then
             source $file 2>/dev/null
         done
     fi
+    if [ -f /usr/share/bash-completion/bash_completion ] ; then
+        source /usr/share/bash-completion/bash_completion 2>/dev/null
+    fi
+    # - the following /usr/share/bash-completion/completions/
+    #   files break bash completion in zsh:
+    breakers=(
+        /usr/share/bash-completion/completions/compgen  \
+        /usr/share/bash-completion/completions/complete \
+    )
+    if [ -d /usr/share/bash-completion/completions ] ; then
+        for file in /usr/share/bash-completion/completions/complete ; do
+            # - ${(M)array[@]:#${pattern}} is zsh-fu that
+            #   expands to elements of array ${array} that
+            #   match pattern ${pattern}
+            if [[ -z "${(M)breakers[@]:#${file}}" ]] ; then
+                source $file 2>/dev/null
+            fi
+        done
+    fi
 fi
 
 # Vi keymap support                                                    {{{1
