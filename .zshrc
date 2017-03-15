@@ -39,16 +39,27 @@ autoload -U +X compinit && compinit -u
 # (but they don't work in babun/cygwin)
 if [ "${OSTYPE}" != 'cygwin' ] ; then
     autoload -U +X bashcompinit && bashcompinit
-    if [ -f /etc/bash_completion ] ; then
-        source /etc/bash_completion 2>/dev/null
-    fi
+    # - /etc/bash_completion used to load the
+    #   completion scripts in
+    #   /etc/bash_completion.d/, but now all
+    #   it does is run
+    #   /usr/share/bash-completion/bash_completion,
+    #   so there is no longer any need to source
+    #   /etc/bash_completion
+    # - running /usr/share/bash-completion/bash_completion
+    #   in zsh seems to prevent the completion scripts in
+    #   /usr/share/bash-completion/completions/ from
+    #   sourcing, so don't run it
+    # - modern practice is to install completion
+    #   scripts to
+    #   /usr/share/bash-completion/completions/
+    #   but there are still completion scripts
+    #   in their legacy install location of
+    #   /etc/bash_completion.d/
     if [ -d /etc/bash_completion.d ] ; then
         for file in /etc/bash_completion.d/* ; do
-            source $file 2>/dev/null
+            source ${file} 2>/dev/null
         done
-    fi
-    if [ -f /usr/share/bash-completion/bash_completion ] ; then
-        source /usr/share/bash-completion/bash_completion 2>/dev/null
     fi
     # - the following /usr/share/bash-completion/completions/
     #   files break bash completion in zsh:
@@ -57,12 +68,14 @@ if [ "${OSTYPE}" != 'cygwin' ] ; then
         /usr/share/bash-completion/completions/complete \
     )
     if [ -d /usr/share/bash-completion/completions ] ; then
-        for file in /usr/share/bash-completion/completions/complete ; do
+        for file in /usr/share/bash-completion/completions/* ; do
             # - ${(M)array[@]:#${pattern}} is zsh-fu that
             #   expands to elements of array ${array} that
             #   match pattern ${pattern}
+            # - so the following line tests for ${file}
+            #   values that do not occur in array ${breakers}
             if [[ -z "${(M)breakers[@]:#${file}}" ]] ; then
-                source $file 2>/dev/null
+                source ${file} 2>/dev/null
             fi
         done
     fi
