@@ -8,7 +8,8 @@ HIST_STAMPS="yyyy-mm-dd"
 
 # Modules                                                              {{{1
 # zpty used by vim plugin zchee/deoplete-zsh
-zmodload zsh/files zsh/zutil zsh/zpty
+# zcomplist provides menuselect keymap
+zmodload zsh/files zsh/zutil zsh/complist zsh/zpty
 
 # Plugins                                                              {{{1
 plugins=(
@@ -35,7 +36,13 @@ plugins=(
 
 # Completion                                                           {{{1
 autoload -U +X compinit && compinit -u
-# use bash completion scripts
+# turn off old-style completion                                        {{{2
+zstyle ':completion:*' use-compctl false
+# menu completion                                                      {{{2
+# - based on http://zsh.sourceforge.net/Guide/zshguide06.html #6.2.3:
+zstyle ':completion:*' menu select=10
+bindkey -M menuselect '^o' accept-and-infer-next-history
+# use bash completion scripts                                          {{{2
 # (but they don't work in babun/cygwin)
 if [ "${OSTYPE}" != 'cygwin' ] ; then
     autoload -U +X bashcompinit && bashcompinit
@@ -98,25 +105,28 @@ function _history-incremental-preserve-pattern-search-backward {
     narrow-to-region -R state
 }
 zle -N _history-incremental-preserve-pattern-search-backward
-bindkey -M vicmd   '/'    _history-incremental-preserve-pattern-search-backward
-bindkey -M vicmd   '?'    history-incremental-pattern-search-forward
-bindkey -M viins   '^R'   _history-incremental-preserve-pattern-search-backward
-bindkey -M isearch '^R'   history-incremental-pattern-search-backward
-bindkey -M viins   '^S'   history-incremental-pattern-search-forward
+bindkey -M vicmd   '/'  _history-incremental-preserve-pattern-search-backward
+bindkey -M vicmd   '?'  history-incremental-pattern-search-forward
+bindkey -M viins   '^R' _history-incremental-preserve-pattern-search-backward
+bindkey -M isearch '^R' history-incremental-pattern-search-backward
+bindkey -M viins   '^S' history-incremental-pattern-search-forward
 # special keys                                                         {{{2
 # note: to get key sequence for a key, do either of these in terminal:
 #       Ctrl-v [press key]
-#       cat >/dev/null [press key]
-#       [thanks to <http://zshwiki.org/home/zle/bindkeys> for tip]
+#       cat >/dev/null [press Enter then key]
+#       [thanks to http://zshwiki.org/home/zle/bindkeys for tip]
 # - home key
 #   default: invokes run-help on first token in line
-bindkey -M viins   '^[[H' vi-beginning-of-line
+bindkey -M viins '^[[H' vi-beginning-of-line
 # - end key
 #   default: after pressing <home>, <end> stops working
-bindkey -M viins   '^[[F' end-of-line
+bindkey -M viins '^[[F' end-of-line
 # - delete key
 #   default: change case of next three characters and enter normal mode
-bindkey -M viins   '^[[3~' vi-delete-char
+bindkey -M viins '^[[3~' vi-delete-char
+# - <Ctrl-x><h> keys
+#   default: display function help
+bindkey -M viins '^Xh' _complete_help
 
 # Mimetype support                                                     {{{1
 autoload -Uz zsh-mime-setup
@@ -196,7 +206,7 @@ for COLOR in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE; do
     eval export $COLOR='$fg_no_bold[${(L)COLOR}]'
     eval export BOLD_$COLOR='$fg_bold[${(L)COLOR}]'
 done
-eval RESET='$reset_color'
+eval export RESET='$reset_color'
 
 # Variables                                                            {{{1
 # paths                                                                {{{2
@@ -310,11 +320,10 @@ setopt pushd_silent
 # can try to expand cd var by prepending '~'                           {{{2
 # - set by plugin
 setopt cdable_vars
-# move to end of word on completion                                    {{{2
-# - set by plugin
+# configure completion (override plugin-set options)                   {{{2
+# move to end of word on completion
 setopt always_to_end
-# complete from both ends of word                                      {{{2
-# - set by plugin
+# complete from both ends of word
 setopt complete_in_word
 # history saves command timestamp and duration                         {{{2
 # - set by plugin
