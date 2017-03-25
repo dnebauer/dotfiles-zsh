@@ -208,6 +208,12 @@ for COLOR in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE; do
 done
 eval export RESET='$reset_color'
 
+# Editor                                                               {{{1
+# prefer nvim                                                          {{{2
+if type nvim > /dev/null 2>&1; then
+    alias vim='nvim'
+fi
+
 # Variables                                                            {{{1
 # paths                                                                {{{2
 # - base PATH                                                          {{{3
@@ -279,7 +285,11 @@ export manpath
 export WNHOME
 export NODE_PATH
 # editor                                                               {{{2
-export EDITOR='vim'
+if type nvim > /dev/null 2>&1; then
+    export EDITOR='nvim'
+else
+    export EDITOR='vim'
+fi
 export USE_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
 # urls                                                                 {{{2
