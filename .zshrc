@@ -295,6 +295,10 @@ export VISUAL="$EDITOR"
 # urls                                                                 {{{2
 # - github account                                                     {{{3
 export GITURL='https://github.com/dnebauer'
+# gpg encryption                                                       {{{2
+# - terminal support for vim                                           {{{3
+GPG_TTY="$(tty)"
+export GPG_TTY
                                                                      # }}}1
 
 # Oh My Zsh configuration
