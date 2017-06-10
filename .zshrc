@@ -87,6 +87,8 @@ if [ "${OSTYPE}" != 'cygwin' ] ; then
         done
     fi
 fi
+# fasd command line completion                                         {{{2
+eval "$(fasd --init auto)"
 
 # Vi keymap support                                                    {{{1
 # help                                                                 {{{2
