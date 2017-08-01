@@ -409,7 +409,9 @@ if [ -f '/usr/bin/ag' ] ; then
     if [ $(alias 'ag' >/dev/null ; echo $?) -eq 0 ] ; then
         unalias 'ag'
     fi
-fi                                                                    # }}}1
+fi
+# qutebrowser to use webengine backend                                  {{{1
+alias qutebrowser='qutebrowser --backend webengine'                   # }}}1
 
 # Initial apps
 
