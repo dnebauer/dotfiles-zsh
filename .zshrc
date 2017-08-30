@@ -90,7 +90,7 @@ fi
 # fasd command line completion                                         {{{2
 eval "$(fasd --init auto)"
 # default completion for commands without defined completion           {{{2
-compdef _gnu_generic mc iconv sudo
+compdef _gnu_generic mc iconv sudo display
 
 # Vi keymap support                                                    {{{1
 # help                                                                 {{{2
