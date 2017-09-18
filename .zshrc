@@ -267,10 +267,6 @@ unset perl5_root
 perl5_man="${HOME}/perl5/man"
 manpath="${perl5_man}${manpath+:}${manpath}"
 unset perl5_man
-# - perl6 rakudobrew                                                   {{{3
-rakudo_bin="${HOME}/.rakudobrew/bin"
-[[ -d "${rakudo_bin}" ]] && PATH="${rakudo_bin}:${PATH}"
-unset rakudo_bin
 # - wordnet                                                            {{{3
 if [ "${OSTYPE}" = 'cygwin' \
         -a -f "${wordnet}/bin/wn.exe" \
