@@ -90,7 +90,12 @@ fi
 # fasd command line completion                                         {{{2
 eval "$(fasd --init auto)"
 # default completion for commands without defined completion           {{{2
-compdef _gnu_generic mc iconv sudo display
+compdef _gnu_generic \
+    display \
+    iconv \
+    mc \
+    python \
+    sudo
 
 # Vi keymap support                                                    {{{1
 # help                                                                 {{{2
@@ -249,11 +254,13 @@ unset npm_mod
 npm_man="${HOME}/.local/share/man"
 manpath="${manpath}${manpath+:}${npm_man}"
 unset npm_man
+# - perl6 bin                                                          {{{3
+PATH="${HOME}/.perl6/bin${PATH+:}${PATH}"
 # - perl5 local::lib                                                   {{{3
 #   . 2016-03-13: discovered that PERL5LIB and PERL_LOCAL_LIB_ROOT
 #     are set to their desired values before reaching this point,
 #     so check value of vars before adding to them
-PATH="${HOME}/perl5/bin${PATH+:}${PATH}";
+PATH="${HOME}/perl5/bin${PATH+:}${PATH}"
 perl5_lib="${HOME}/perl5/lib/perl5"
 [[ "${PERL5LIB}" != "${perl5_lib}" ]] && \
     PERL5LIB="${perl5_lib}${PERL5LIB+:}${PERL5LIB}"
