@@ -92,6 +92,7 @@ eval "$(fasd --init auto)"
 # default completion for commands without defined completion           {{{2
 compdef _gnu_generic \
     display \
+    dpkg \
     iconv \
     mc \
     python \
