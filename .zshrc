@@ -96,6 +96,7 @@ compdef _gnu_generic \
     iconv \
     mc \
     python \
+    rsync \
     sudo
 
 # Vi keymap support                                                    {{{1
