@@ -97,7 +97,8 @@ compdef _gnu_generic \
     mc \
     python \
     rsync \
-    sudo
+    sudo \
+    tar
 
 # Vi keymap support                                                    {{{1
 # help                                                                 {{{2
