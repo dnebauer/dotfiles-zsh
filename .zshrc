@@ -95,6 +95,7 @@ compdef _gnu_generic \
     dpkg \
     iconv \
     mc \
+    perl \
     python \
     rsync \
     sudo \
