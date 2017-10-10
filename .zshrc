@@ -93,6 +93,7 @@ eval "$(fasd --init auto)"
 compdef _gnu_generic \
     display \
     dpkg \
+    find \
     iconv \
     mc \
     perl \
