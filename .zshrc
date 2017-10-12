@@ -94,6 +94,7 @@ compdef _gnu_generic \
     display \
     dpkg \
     find \
+    gunzip \
     iconv \
     mc \
     perl \
