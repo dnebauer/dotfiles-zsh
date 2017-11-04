@@ -97,6 +97,7 @@ compdef _gnu_generic \
     gunzip \
     iconv \
     mc \
+    pass \
     perl \
     python \
     rsync \
