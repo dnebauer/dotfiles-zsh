@@ -91,17 +91,8 @@ fi
 eval "$(fasd --init auto)"
 # default completion for commands without defined completion           {{{2
 compdef _gnu_generic \
-    display \
-    dpkg \
-    find \
-    gunzip \
-    iconv \
-    mc \
-    pass \
-    perl \
-    python \
-    rsync \
-    sudo \
+    convert display dpkg find   gunzip iconv \
+    mc      pass    perl python rsync  sudo  \
     tar
 
 # Vi keymap support                                                    {{{1
