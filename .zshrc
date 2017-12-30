@@ -91,9 +91,9 @@ fi
 eval "$(fasd --init auto)"
 # default completion for commands without defined completion           {{{2
 compdef _gnu_generic \
-    convert display dpkg find gunzip iconv \
-    man     mc      pass perl python rsync \
-    sup-add sudo    tar
+    convert display dpkg find gunzip iconv  \
+    lintian man     mc   pass perl   python \
+    rsync   sup-add sudo tar  vcsh
 
 # Vi keymap support                                                    {{{1
 # help                                                                 {{{2
