@@ -221,6 +221,11 @@ if type nvim > /dev/null 2>&1; then
     alias vim='nvim'
 fi
 
+# Mail    {{{1
+# astroid setup    {{{2
+export GI_TYPELIB_PATH='/usr/lib/girepository-1.0'
+alias astroid="unbuffer astroid -l $HOME/.config/astroid/log $*"
+
 # Variables    {{{1
 # paths    {{{2
 # - base PATH    {{{3
