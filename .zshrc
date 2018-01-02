@@ -222,9 +222,11 @@ if type nvim > /dev/null 2>&1; then
 fi
 
 # Mail    {{{1
-# astroid setup    {{{2
+# astroid    {{{2
 export GI_TYPELIB_PATH='/usr/lib/girepository-1.0'
-alias astroid="unbuffer astroid -l $HOME/.config/astroid/log $*"
+alias astroid="unbuffer astroid -l $HOME/.local/mail/log/astroid.log $*"
+# offlineimap    {{{2
+alias offlineimap="offlineimap -l $HOME/.local/mail/log/offlineimap.log $*"
 
 # Variables    {{{1
 # paths    {{{2
