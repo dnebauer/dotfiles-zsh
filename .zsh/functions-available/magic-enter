@@ -1,10 +1,20 @@
 zmodload zsh/zle
-if [[ -z $BUFFER ]]; then
+
+# notify of new mail
+if [[ -z "$BUFFER" && -f "/var/mail/$USER" ]]; then
+    # - the 'dir|cut' command extracts file size
+    if (( $(dir -s -1 "/var/mail/$USER" | cut -d' ' -f1) > 0 )); then
+        echo -ne '\n'
+        echo "You have new mail"
+    fi
+fi
+
+# show git status if applicable
+if [[ -z "$BUFFER" ]]; then
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-#        echo -ne '\n'
+        echo -ne '\n'
         git status 
     fi
-    zle accept-line
-else
-    zle accept-line
 fi
+
+zle accept-line
