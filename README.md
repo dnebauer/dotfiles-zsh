@@ -1,4 +1,3 @@
-vcsh-zsh
-========
+# dotfiles-zsh #
 
-Personal zsh configuration in a vcsh repository.
+Personal zsh configuration.
