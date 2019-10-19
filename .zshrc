@@ -4,7 +4,7 @@
 
 # History    {{{1
 # format of command execution timestamp in history output
-HIST_STAMPS="yyyy-mm-dd"
+HIST_STAMPS='yyyy-mm-dd'
 
 # Modules    {{{1
 # zpty used by vim plugin zchee/deoplete-zsh
@@ -13,25 +13,28 @@ zmodload zsh/files zsh/zutil zsh/complist zsh/zpty
 
 # Plugins    {{{1
 plugins=(
-    adb             \
-    chucknorris     \
-    fasd            \
-    git             \
-    colored-man     \
-    colorize        \
-    cpanm           \
-    debian          \
-    dircycle        \
-    github          \
-    npm             \
-    perl            \
-    ruby            \
-    rvm             \
-    themes          \
-    tmux            \
-    tmuxinator      \
-    vi-mode         \
-    vim-interaction \
+    adb
+    bgnotify
+    chucknorris
+    colored-man-pages
+    colorize
+    cpanm
+    debian
+    dircycle
+    fasd
+    git
+    github
+    npm
+    perl
+    ruby
+    rvm
+    themes
+    tmux
+    tmuxinator
+    vi-mode
+    vim-interaction
+    zsh-autosuggestions
+    zsh-syntax-highlighting
 )
 
 # Completion    {{{1
@@ -94,6 +97,13 @@ compdef _gnu_generic \
     convert display dpkg find gunzip iconv  \
     lintian man     mc   pass perl   python \
     rsync   sup-add sudo tar  vcsh
+# enable fzf keybindings    {{{2
+fzf_binary='fzf'
+fzf_bindings='/usr/share/doc/fzf/examples/key-bindings.zsh'
+if command -v "${fzf_binary}" >/dev/null && [ -f "${fzf_bindings}" ] ; then
+    source "$fzf_bindings"
+fi
+unset fzf_binary fzf_bindings
 
 # Vi keymap support    {{{1
 # help    {{{2
@@ -230,10 +240,10 @@ local_bin="${HOME}/.local/bin"
 [[ -d "${local_bin}" ]] && PATH="${local_bin}:${PATH}"
 unset local_bin
 # - go    {{{3
-go_dir="/usr/local/lib/go"
+go_dir='/usr/local/lib/go'
 [[ -d "${go_dir}" ]] && GOPATH="${go_dir}"
 unset go_dir
-go_bin="/usr/local/lib/go/bin"
+go_bin='/usr/local/lib/go/bin'
 [[ -d "${go_bin}" ]] && PATH="${PATH}:${go_bin}"
 unset go_bin
 # - haskell-installed binaries on cygwin    {{{3
@@ -287,6 +297,12 @@ if [ "${OSTYPE}" = 'cygwin' \
     WNHOME="${wordnet}"
 fi
 unset wordnet
+# - tiddlywiki    {{{3
+tw_plugins='/usr/local/share/tiddlywiki/plugins'
+[[ -d "${tw_plugins}" ]] && TIDDLYWIKI_PLUGIN_PATH="${tw_plugins}${TIDDLYWIKI_PLUGIN_PATH+:}${TIDDLYWIKI_PLUGIN_PATH}"
+tw_plugins='/usr/local/lib/node_modules/tiddlywiki/plugins'
+[[ -d "${tw_plugins}" ]] && TIDDLYWIKI_PLUGIN_PATH="${tw_plugins}${TIDDLYWIKI_PLUGIN_PATH+:}${TIDDLYWIKI_PLUGIN_PATH}"
+unset tw_plugins
 # - export paths    {{{3
 export PATH
 export PERL5LIB
@@ -296,6 +312,7 @@ export PERL_MM_OPT
 export manpath
 export WNHOME
 export NODE_PATH
+export TIDDLYWIKI_PLUGIN_PATH
 # editor    {{{2
 if type nvim > /dev/null 2>&1; then
     export EDITOR='nvim'
