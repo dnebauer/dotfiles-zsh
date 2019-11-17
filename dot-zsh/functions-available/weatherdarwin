@@ -1,0 +1,2 @@
+curl -s https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2073124 \
+    | awk -F'</*title>' '!a[$2]++&&NF!=1 {gsub("&#xB0;","",$2); print $2}'
