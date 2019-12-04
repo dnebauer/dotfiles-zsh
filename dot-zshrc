@@ -46,9 +46,6 @@ zstyle ':completion:*' use-compctl false
 zstyle ':completion:*' menu select=10
 bindkey -M menuselect '^o' accept-and-infer-next-history
 # use bash completion scripts    {{{2
-# (but they don't work in babun/cygwin)
-if [ "${OSTYPE}" != 'cygwin' ] ; then
-    autoload -U +X bashcompinit && bashcompinit
 # - /etc/bash_completion used to load the
 #   completion scripts in
 #   /etc/bash_completion.d/, but now all
@@ -66,30 +63,33 @@ if [ "${OSTYPE}" != 'cygwin' ] ; then
 #   but there are still completion scripts
 #   in their legacy install location of
 #   /etc/bash_completion.d/
-    if [ -d /etc/bash_completion.d ] ; then
-        for file in /etc/bash_completion.d/* ; do
-            source ${file} 2>/dev/null
-        done
-    fi
+bash_comp_d='/etc/bash_completion.d'
+if [ -d "$bash_comp_d" ] ; then
+    for file in "$bash_comp_d"/* ; do
+        source $file 2>/dev/null
+    done
+fi
+unset bash_comp_d
 # - the following /usr/share/bash-completion/completions/
 #   files break bash completion in zsh:
-    breakers=(
-        /usr/share/bash-completion/completions/compgen  \
-        /usr/share/bash-completion/completions/complete \
-    )
-    if [ -d /usr/share/bash-completion/completions ] ; then
-        for file in /usr/share/bash-completion/completions/* ; do
+breakers=(
+    /usr/share/bash-completion/completions/compgen  \
+    /usr/share/bash-completion/completions/complete \
+)
+bash_comp='/usr/share/bash-completion/completions'
+if [ -d "$bash_comp" ] ; then
+    for file in "$bash_comp"/* ; do
 # - ${(M)array[@]:#${pattern}} is zsh-fu that
 #   expands to elements of array ${array} that
 #   match pattern ${pattern}
 # - so the following line tests for ${file}
 #   values that do not occur in array ${breakers}
-            if [[ -z "${(M)breakers[@]:#${file}}" ]] ; then
-                source ${file} 2>/dev/null
-            fi
-        done
-    fi
+        if [[ -z "${(M)breakers[@]:#${file}}" ]] ; then
+            source $file 2>/dev/null
+        fi
+    done
 fi
+unset bash_comp
 # fasd command line completion    {{{2
 eval "$(fasd --init auto)"
 # default completion for commands without defined completion    {{{2
@@ -100,7 +100,7 @@ compdef _gnu_generic \
 # enable fzf keybindings    {{{2
 fzf_binary='fzf'
 fzf_bindings='/usr/share/doc/fzf/examples/key-bindings.zsh'
-if command -v "${fzf_binary}" >/dev/null && [ -f "${fzf_bindings}" ] ; then
+if command -v "$fzf_binary" >/dev/null && [ -f "$fzf_bindings" ] ; then
     source "$fzf_bindings"
 fi
 unset fzf_binary fzf_bindings
@@ -199,14 +199,6 @@ autoload_my_fns git-add-all
 if type -f git-add-all &>/dev/null ; then
     alias gaa=git-add-all
 fi
-# - dictionary and thesaurus    {{{3
-#   . uses WordNet v3.0
-wordnet='/usr/local/WordNet-3.0'
-if [ "${OSTYPE}" != 'cygwin' -o ! -f "${wordnet}/bin/wn.exe" ] ; then
-    if type -f dictword &>/dev/null ; then
-        disable -f dictword
-    fi
-fi
 # - man pages open in vim    {{{3
 compdef vman='man'
 # - file navigation    {{{3
@@ -227,92 +219,75 @@ eval export RESET='$reset_color'
 
 # Editor    {{{1
 # prefer nvim    {{{2
-if type nvim > /dev/null 2>&1; then
-    alias vim='nvim'
-fi
+# - temporarily disable due to nvim bug in which events are not triggering
+#   associated autocmds (https://github.com/neovim/neovim/issues/11279) 
+##if type nvim > /dev/null 2>&1; then
+##    alias vim='nvim'
+##fi
 
 # Variables    {{{1
 # paths    {{{2
 # - base PATH    {{{3
-PATH='/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games'
+path+=('/usr/local/bin')
+path+=('/usr/bin')
+path+=('/bin')
+path+=('/usr/games')
 # - executables (local)    {{{3
-local_bin="${HOME}/.local/bin"
-[[ -d "${local_bin}" ]] && PATH="${local_bin}:${PATH}"
+local_bin="$HOME/.local/bin"
+[[ -d "$local_bin" ]] && path=("$local_bin" $path)
 unset local_bin
-# - go    {{{3
-go_dir='/usr/local/lib/go'
-[[ -d "${go_dir}" ]] && GOPATH="${go_dir}"
-unset go_dir
-go_bin='/usr/local/lib/go/bin'
-[[ -d "${go_bin}" ]] && PATH="${PATH}:${go_bin}"
-unset go_bin
-# - haskell-installed binaries on cygwin    {{{3
-hask_bin='/cygdrive/c/dtn/AppData/Roaming/cabal/bin'
-[[ -d "${hask_bin}" ]] && PATH="${PATH}:${hask_bin}"
-unset hask_bin
-# - node.js-installed binaries on cygwin    {{{3
-node_js="/cygdrive/c/Program\ Files/nodejs"
-[[ -d "${node_js}" ]] && PATH="${PATH}:${node_js}"
-unset node_js
-# - npm-installedpps    {{{3
+# - npm-installed apps    {{{3
 #   . in ~/.npmrc is configured with prefix of ~/.local
-npm_mod="${HOME}/.local/lib/node_modules"
-NODE_PATH="${NODE_PATH}${NODE_PATH+:}${npm_mod}"
+if [[ -v node_path ]] ; then
+    export -T NODE_PATH node_path
+    typeset -U NODE_PATH node_path
+fi
+npm_mod="$HOME/.local/lib/node_modules"
+[[ -d "$npm_mod" ]] && node_path+=("$npm_mod")
 unset npm_mod
-npm_man="${HOME}/.local/share/man"
-manpath="${manpath}${manpath+:}${npm_man}"
+npm_man="$HOME/.local/share/man"
+[[ -d "$npm_man" ]] && manpath+=("$npm_man")
 unset npm_man
 # - perl6 bin    {{{3
-PATH="${HOME}/.perl6/bin${PATH+:}${PATH}"
+perl6_bin="$HOME/.perl6/bin"
+[[ -d "$perl6_bin" ]] && path+=("$perl6_bin")
+unset perl6_bin
 # - perl5 locally installed modules    {{{3
 #   . as per local::lib
 #   . binary path
-perl5_bin="${HOME}/perl5/bin"
-PATH="${perl5_bin}${PATH+:}${PATH}"
+perl5_bin="$HOME/perl5/bin"
+[[ -d "$perl5_bin" ]] && path+=("$perl5_bin")
 unset perl5_bin
 #   . library path
 #     - 2016-03-13: discovered that PERL5LIB and PERL_LOCAL_LIB_ROOT
 #       are set to their desired values before reaching this point,
 #       so check value of vars before adding to them
-perl5_lib="${HOME}/perl5/lib/perl5"
-[[ "${PERL5LIB}" != "${perl5_lib}" ]] && \
-    PERL5LIB="${perl5_lib}${PERL5LIB+:}${PERL5LIB}"
+perl5_lib="$HOME/perl5/lib/perl5"
+[[ "$PERL5LIB" != "$perl5_lib" ]] && \
+    export PERL5LIB="${perl5_lib}${PERL5LIB+:}${PERL5LIB}"
 unset perl5_lib
-perl5_root="${HOME}/perl5"
-[[ "${PERL_LOCAL_LIB_ROOT}" != "${perl5_root}" ]] && \
-    PERL_LOCAL_LIB_ROOT="${perl5_root}${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"
+perl5_root="$HOME/perl5"
+[[ "$PERL_LOCAL_LIB_ROOT" != "$perl5_root" ]] && \
+export PERL_LOCAL_LIB_ROOT=\
+"${perl5_root}${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"
 #   . build options
-PERL_MB_OPT="--install_base \"${perl5_root}\""
-PERL_MM_OPT="INSTALL_BASE=${perl5_root}"
+export PERL_MB_OPT="--install_base \"$perl5_root\""
+export PERL_MM_OPT="INSTALL_BASE=$perl5_root"
 unset perl5_root
 #   . man pages
-perl5_man="${HOME}/perl5/man"
-manpath="${perl5_man}${manpath+:}${manpath}"
+perl5_man="$HOME/perl5/man"
+manpath+=("$perl5_man")
 unset perl5_man
-# - wordnet    {{{3
-if [ "${OSTYPE}" = 'cygwin' \
-        -a -f "${wordnet}/bin/wn.exe" \
-        -a type -f dictword &>/dev/null ] ; then
-    PATH="${PATH}:${wordnet}/bin"
-    WNHOME="${wordnet}"
-fi
-unset wordnet
 # - tiddlywiki    {{{3
-tw_plugins='/usr/local/share/tiddlywiki/plugins'
-[[ -d "${tw_plugins}" ]] && TIDDLYWIKI_PLUGIN_PATH="${tw_plugins}${TIDDLYWIKI_PLUGIN_PATH+:}${TIDDLYWIKI_PLUGIN_PATH}"
-tw_plugins='/usr/local/lib/node_modules/tiddlywiki/plugins'
-[[ -d "${tw_plugins}" ]] && TIDDLYWIKI_PLUGIN_PATH="${tw_plugins}${TIDDLYWIKI_PLUGIN_PATH+:}${TIDDLYWIKI_PLUGIN_PATH}"
+if [[ ! -v tiddlywiki_plugin_path ]] ; then
+    export -T TIDDLYWIKI_PLUGIN_PATH tiddlywiki_plugin_path
+    typeset -U TIDDLYWIKI_PLUGIN_PATH tiddlywiki_plugin_path
+fi
+tw_plugins='/usr/local/share/tiddlywiki/plugins'  # user-installed
+[[ -d "$tw_plugins" ]] && tiddlywiki_plugin_path+=("$tw_plugins")
+tw_plugins='/usr/local/lib/node_modules/tiddlywiki/plugins'  # official
+[[ -d "$tw_plugins" ]] && tiddlywiki_plugin_path+=("$tw_plugins")
 unset tw_plugins
-# - export paths    {{{3
-export PATH
-export PERL5LIB
-export PERL_LOCAL_LIB_ROOT
-export PERL_MB_OPT
-export PERL_MM_OPT
-export manpath
-export WNHOME
-export NODE_PATH
-export TIDDLYWIKI_PLUGIN_PATH
 # editor    {{{2
 if type nvim > /dev/null 2>&1; then
     export EDITOR='nvim'
