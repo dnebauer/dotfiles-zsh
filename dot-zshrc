@@ -228,6 +228,9 @@ eval export RESET='$reset_color'
 # Variables    {{{1
 # paths    {{{2
 # - base PATH    {{{3
+unset path PATH
+export -T PATH path
+typeset -U PATH path
 path+=('/usr/local/bin')
 path+=('/usr/bin')
 path+=('/bin')
