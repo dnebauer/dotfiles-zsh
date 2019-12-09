@@ -235,6 +235,13 @@ path+=('/usr/local/bin')
 path+=('/usr/bin')
 path+=('/bin')
 path+=('/usr/games')
+# - base LUA_PATH    {{{3
+unset LUA_PATH lua_path
+export -T LUA_PATH lua_path ';'  # separator is single semicolon
+typeset -U LUA_PATH lua_path
+lua_path+=('/usr/share/lua/lib/?.lua')       #} modules installed via user-
+lua_path+=('/usr/share/lua/lib/?/init.lua')  #} built debian packages
+lua_path+=(';')  # so LUA_PATH ends with ';;', meaning append default path
 # - executables (local)    {{{3
 local_bin="$HOME/.local/bin"
 [[ -d "$local_bin" ]] && path=("$local_bin" $path)
