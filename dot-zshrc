@@ -472,10 +472,7 @@ if command -v ugrep >/dev/null ; then
     command -v soffice >/dev/null && \
         filters+=('odt,doc,docx,rtf,xls,xlsx,ppt,pptx:soffice --headless --cat %')
     ugrep_filter=''
-    if [[ ${#filters[@]} -gt 0 ]] ; then
-        ugrep_filter="$(printf -v var '%s,' "${filters[@]}" ; echo "${var%,}")"
-        ugrep_filter="--filter='$ugrep_filter'"
-    fi
+    [[ ${#filters[@]} -gt 0 ]] && ugrep_filter="--filter='${(j:,:)filters}'"
     unset filters
     for cmd cmd_alias ("${(@kv)ugrep_aliases}") ; do
         [ $(alias "$cmd" >/dev/null ; echo $?) -eq 0 ] && unalias "$cmd"
